@@ -5,17 +5,21 @@ import axios from "axios";
 interface AnalysisResult {
   labels: string[];
   audioUrl: string;
+  dbSaved?: boolean;
+  dbError?: string | null;
 }
 
 export default function Home() {
 const [files, setFiles] = useState<File[]>([]);
 const [results, setResults] = useState<AnalysisResult[]>([]);
 const [isUploading, setIsUploading] = useState(false);
+const [errorMessage, setErrorMessage] = useState("");
 
  const handleUpload = async () => {
   if (!files.length) return;
 
   setIsUploading(true);
+  setErrorMessage("");
 
   try {
     const formData = new FormData();
@@ -27,8 +31,14 @@ const [isUploading, setIsUploading] = useState(false);
     const res = await axios.post("http://localhost:5000/upload", formData);
 
     setResults(res.data);
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Upload failed:", error);
+    if (axios.isAxiosError(error)) {
+      const serverMessage = error.response?.data?.message || error.response?.data?.error;
+      setErrorMessage(serverMessage || error.message);
+    } else {
+      setErrorMessage("Upload failed");
+    }
   } finally {
     setIsUploading(false);
   }
@@ -58,6 +68,12 @@ const [isUploading, setIsUploading] = useState(false);
           </button>
         </div>
 
+        {errorMessage && (
+          <p className="mt-4 rounded bg-red-50 px-3 py-2 text-sm text-red-700">
+            {errorMessage}
+          </p>
+        )}
+
        {results.length > 0 && (
   <div className="mt-6 space-y-4">
     {results.map((item, index) => (
@@ -65,6 +81,11 @@ const [isUploading, setIsUploading] = useState(false);
         <p className="text-gray-700 mb-2">
           {item.labels.join(", ")}
         </p>
+        {item.dbSaved === false && item.dbError && (
+          <p className="mb-2 text-sm text-red-600">
+            DynamoDB: {item.dbError}
+          </p>
+        )}
         <audio controls src={item.audioUrl} className="w-full"></audio>
       </div>
     ))}
