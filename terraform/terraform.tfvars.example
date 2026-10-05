@@ -1,0 +1,9 @@
+# Copy or rename this file to terraform.tfvars to customize your deployment variables
+
+aws_region            = "ap-south-1"
+project_name          = "ai-image-analyzer"
+environment           = "dev"
+dynamodb_table_name   = "ImageAnalysis"
+instance_type         = "t3.micro"
+enable_ec2_deployment = true
+ssh_key_name          = "" # Enter existing AWS Key Pair name if you need SSH access to EC2

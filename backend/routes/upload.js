@@ -25,8 +25,8 @@ router.post("/", upload.array("images", 10), async (req, res) => {
         // 1. Upload to S3
         const imageUrl = await uploadFile(file);
 
-        // 2. Detect labels
-        const labels = await detectLabels(imageUrl);
+        // 2. Detect labels and bounding box objects
+        const { labels, objects } = await detectLabels(imageUrl);
 
         // 3. Save to DynamoDB
         try {
@@ -37,15 +37,18 @@ router.post("/", upload.array("images", 10), async (req, res) => {
           console.error("DynamoDB save failed:", error);
         }
 
-        // 4. Convert to sentence
-        const text = `This image contains: ${labels.join(", ")}`;
+        // 4. Convert to English sentence for speech
+        const textToSay = labels.length > 0 
+          ? `This image contains: ${labels.slice(0, 5).join(", ")}.`
+          : "No specific objects were detected in this image.";
 
-        // 5. Convert to speech
-        const audioFile = await textToSpeech(text);
+        // 5. Convert to speech via AWS Polly
+        const audioFile = await textToSpeech(textToSay);
 
         return {
           imageUrl,
           labels,
+          objects,
           audioUrl: `http://localhost:5000/${audioFile}`,
           dbSaved,
           dbError

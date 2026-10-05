@@ -15,11 +15,30 @@ exports.detectLabels = async (imageUrl) => {
         Name: s3Key
       }
     },
-    MaxLabels: 5,
-    MinConfidence: 70
+    MaxLabels: 10,
+    MinConfidence: 60
   };
 
   const result = await rekognition.detectLabels(params).promise();
 
-  return result.Labels.map(label => label.Name);
+  const labels = result.Labels.map(label => label.Name);
+
+  const objects = [];
+  result.Labels.forEach(label => {
+    if (label.Instances && label.Instances.length > 0) {
+      label.Instances.forEach(instance => {
+        if (instance.BoundingBox) {
+          objects.push({
+            name: label.Name,
+            confidence: Math.round(instance.Confidence || label.Confidence),
+            boundingBox: instance.BoundingBox // { Width, Height, Left, Top }
+          });
+        }
+      });
+    }
+  });
+
+  console.log(`Detected ${labels.length} labels and ${objects.length} bounding box objects`);
+
+  return { labels, objects };
 };

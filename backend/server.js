@@ -1,6 +1,12 @@
+const path = require("path");
+const dotenv = require("dotenv");
+
+// Load .env from backend folder or root folder
+dotenv.config({ path: path.join(__dirname, ".env") });
+dotenv.config({ path: path.join(__dirname, "../.env") });
+
 const express = require("express");
 const cors = require("cors");
-const path = require("path");
 
 const uploadRoute = require("./routes/upload");
 
