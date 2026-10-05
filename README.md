@@ -76,14 +76,14 @@ The **AI Image Vision & Voice Analyzer** is a production-ready, cloud-native app
 graph TD
     User([User / Browser]) -->|1. Upload Image| Frontend[Next.js App - Port 3000]
     Frontend -->|2. POST /upload| Backend[Node.js Express API - Port 5000]
-    
+  
     subgraph AWS Cloud Infrastructure
         Backend -->|3. Store Raw Image| S3[AWS S3 Bucket]
         Backend -->|4. Detect Labels & Bounding Boxes| Rekognition[AWS Rekognition]
         Backend -->|5. Synthesize English Audio| Polly[AWS Polly]
         Backend -->|6. Log Analysis Metadata| DynamoDB[AWS DynamoDB Table]
     end
-    
+  
     Backend -->|7. Return Image URL, White Brackets & Audio| Frontend
     Frontend -->|8. Render Image + White Brackets + Audio Speech| User
 ```
@@ -177,32 +177,32 @@ For each analyzed image:
 
 ## ✨ Features
 
-| Feature | Description |
-|---------|-------------|
-| 🖼️ **Multi-Image Upload** | Drag & drop up to 10 images with instant local thumbnails |
-| 🔲 **Bounding Box Overlays** | White square bracket visual highlighting over detected physical objects |
-| 🔊 **AI Speech Synthesis** | Automatic English audio narration describing image contents via AWS Polly |
-| 🗄️ **History Logging** | Persistent serverless logs in DynamoDB (queryable by user ID) |
-| ⚡ **Parallel Processing** | High-throughput multi-image processing using `Promise.all()` |
-| 🌿 **Minimalist UI** | Clean, responsive interface with Next.js 16 + Tailwind CSS |
-| 🏗️ **Infrastructure as Code** | Single-command cloud provisioning with Terraform |
-| 🔒 **IAM Least Privilege** | Fine-grained IAM policies for S3, Rekognition, Polly, DynamoDB |
-| 🌐 **VPC Networking** | Custom VPC with public subnet, IGW, and security groups |
-| 🖥️ **Optional EC2 Hosting** | Terraform-provisioned Ubuntu EC2 with Node.js for production deployment |
+| Feature                              | Description                                                               |
+| ------------------------------------ | ------------------------------------------------------------------------- |
+| 🖼️**Multi-Image Upload**     | Drag & drop up to 10 images with instant local thumbnails                 |
+| 🔲**Bounding Box Overlays**    | White square bracket visual highlighting over detected physical objects   |
+| 🔊**AI Speech Synthesis**      | Automatic English audio narration describing image contents via AWS Polly |
+| 🗄️**History Logging**        | Persistent serverless logs in DynamoDB (queryable by user ID)             |
+| ⚡**Parallel Processing**      | High-throughput multi-image processing using`Promise.all()`             |
+| 🌿**Minimalist UI**            | Clean, responsive interface with Next.js 16 + Tailwind CSS                |
+| 🏗️**Infrastructure as Code** | Single-command cloud provisioning with Terraform                          |
+| 🔒**IAM Least Privilege**      | Fine-grained IAM policies for S3, Rekognition, Polly, DynamoDB            |
+| 🌐**VPC Networking**           | Custom VPC with public subnet, IGW, and security groups                   |
+| 🖥️**Optional EC2 Hosting**   | Terraform-provisioned Ubuntu EC2 with Node.js for production deployment   |
 
 ---
 
 ## ⚙️ Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| **Frontend** | Next.js 16 (React 19, TypeScript, Tailwind CSS 4) |
-| **Backend** | Node.js, Express.js 5, Multer |
-| **AI/ML** | AWS Rekognition (Object Detection), AWS Polly (Text-to-Speech) |
-| **Storage** | AWS S3 (Images), AWS DynamoDB (Metadata History) |
-| **Infrastructure** | HashiCorp Terraform (>= 1.3.0), AWS Provider ~> 5.0 |
-| **Networking** | AWS VPC, Subnet, Internet Gateway, Security Groups |
-| **Compute** | AWS EC2 (Optional, Ubuntu 22.04 LTS) |
+| Layer                    | Technology                                                     |
+| ------------------------ | -------------------------------------------------------------- |
+| **Frontend**       | Next.js 16 (React 19, TypeScript, Tailwind CSS 4)              |
+| **Backend**        | Node.js, Express.js 5, Multer                                  |
+| **AI/ML**          | AWS Rekognition (Object Detection), AWS Polly (Text-to-Speech) |
+| **Storage**        | AWS S3 (Images), AWS DynamoDB (Metadata History)               |
+| **Infrastructure** | HashiCorp Terraform (>= 1.3.0), AWS Provider ~> 5.0            |
+| **Networking**     | AWS VPC, Subnet, Internet Gateway, Security Groups             |
+| **Compute**        | AWS EC2 (Optional, Ubuntu 22.04 LTS)                           |
 
 ---
 
@@ -233,38 +233,45 @@ cd terraform
 ```
 
 **2a. Initialize Terraform** (downloads AWS provider plugins):
+
 ```bash
 terraform init
 ```
 
 **2b. Review the execution plan**:
+
 ```bash
 terraform plan
 ```
 
 **2c. Apply and provision all resources**:
+
 ```bash
 terraform apply
 ```
+
 > Type `yes` when prompted to confirm.
 
 **2d. Generate backend `.env` credentials**:
+
 ```bash
 terraform output -raw backend_dotenv_template
 ```
+
 > Copy the output to use in Step 3.
 
 **Resources Created:**
-| Resource | Purpose |
-|----------|---------|
-| S3 Bucket | Image storage with public read access & CORS |
-| DynamoDB Table | `ImageAnalysis` table (pk: userId, sk: timestamp) |
-| IAM Policy | Least-privilege access to S3, Rekognition, Polly, DynamoDB |
-| IAM User + Key | Access credentials for local development |
-| IAM Role + Profile | EC2 instance role for production deployment |
-| VPC + Subnet + IGW | Network isolation with internet access |
-| Security Group | Inbound: ports 22, 80, 3000, 5000. Outbound: all |
-| EC2 Instance | Optional Ubuntu 22.04 server with Node.js (toggle via variable) |
+
+| Resource           | Purpose                                                         |
+| ------------------ | --------------------------------------------------------------- |
+| S3 Bucket          | Image storage with public read access & CORS                    |
+| DynamoDB Table     | `ImageAnalysis` table (pk: userId, sk: timestamp)             |
+| IAM Policy         | Least-privilege access to S3, Rekognition, Polly, DynamoDB      |
+| IAM User + Key     | Access credentials for local development                        |
+| IAM Role + Profile | EC2 instance role for production deployment                     |
+| VPC + Subnet + IGW | Network isolation with internet access                          |
+| Security Group     | Inbound: ports 22, 80, 3000, 5000. Outbound: all                |
+| EC2 Instance       | Optional Ubuntu 22.04 server with Node.js (toggle via variable) |
 
 ---
 
@@ -275,6 +282,7 @@ cd backend
 ```
 
 **3a. Create the `.env` file** with your AWS credentials:
+
 ```env
 AWS_ACCESS_KEY_ID=your_access_key
 AWS_SECRET_ACCESS_KEY=your_secret_key
@@ -282,9 +290,11 @@ AWS_REGION=ap-south-1
 S3_BUCKET_NAME=your_s3_bucket_name
 DYNAMODB_TABLE_NAME=ImageAnalysis
 ```
+
 > 💡 You can paste the output from `terraform output -raw backend_dotenv_template` directly.
 
 **3b. Install dependencies and start the server**:
+
 ```bash
 npm install
 npm start
@@ -301,6 +311,7 @@ cd frontend
 ```
 
 **4a. Install dependencies and start dev server**:
+
 ```bash
 npm install
 npm run dev
@@ -330,11 +341,12 @@ npm run dev
 
 Upload and analyze images.
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `images` | `File[]` | Image files (max 10), sent as `multipart/form-data` |
+| Parameter  | Type       | Description                                          |
+| ---------- | ---------- | ---------------------------------------------------- |
+| `images` | `File[]` | Image files (max 10), sent as`multipart/form-data` |
 
 **Response:**
+
 ```json
 [
   {
@@ -365,11 +377,12 @@ Upload and analyze images.
 
 Retrieve analysis history from DynamoDB.
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
+| Parameter  | Type               | Default       | Description               |
+| ---------- | ------------------ | ------------- | ------------------------- |
 | `userId` | `string` (query) | `demo-user` | Filter history by user ID |
 
 **Response:**
+
 ```json
 [
   {
@@ -434,93 +447,3 @@ ai-image-analyzer/
 ```
 
 ---
-
-## 🔧 Terraform Variables
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `aws_region` | `ap-south-1` | AWS region for all resources |
-| `project_name` | `ai-image-analyzer` | Naming prefix for all resources |
-| `environment` | `dev` | Environment stage (dev/staging/prod) |
-| `dynamodb_table_name` | `ImageAnalysis` | DynamoDB table name |
-| `vpc_cidr` | `10.0.0.0/16` | VPC CIDR block |
-| `public_subnet_cidr` | `10.0.1.0/24` | Public subnet CIDR |
-| `instance_type` | `t3.micro` | EC2 instance type |
-| `ssh_key_name` | `""` | Optional SSH key pair name |
-| `enable_ec2_deployment` | `true` | Toggle EC2 instance creation |
-
----
-
-## 🧹 Cleanup / Destroy Infrastructure
-
-To tear down all AWS resources provisioned by Terraform:
-
-```bash
-cd terraform
-terraform destroy
-```
-> Type `yes` when prompted. This will delete the S3 bucket (including all objects), DynamoDB table, IAM resources, VPC, and EC2 instance.
-
----
-
-## 🐛 Troubleshooting
-
-| Issue | Solution |
-|-------|----------|
-| **Backend won't start** | Ensure `.env` file exists in `backend/` with valid AWS credentials |
-| **S3 upload fails** | Verify `S3_BUCKET_NAME` in `.env` matches the Terraform-created bucket |
-| **Rekognition errors** | Ensure IAM user has `rekognition:DetectLabels` permission and S3 bucket is in a supported region |
-| **Polly audio not playing** | Check browser console; ensure backend is running on port 5000 |
-| **DynamoDB save fails** | Verify `DYNAMODB_TABLE_NAME` matches the Terraform-created table |
-| **CORS errors** | Backend uses `cors()` middleware; ensure frontend calls `http://localhost:5000` |
-| **Terraform init fails** | Ensure Terraform >= 1.3.0 is installed and AWS credentials are configured |
-| **Git push fails (large files)** | See the Git Large Files section below |
-
-### Git Large Files Issue
-
-If `git push` fails with a file size error, it's because Terraform provider binaries (`.terraform/`) or Next.js build cache (`.next/`) were accidentally committed. These directories should be git-ignored. See the `.gitignore` file for the correct patterns:
-
-```
-.terraform/
-*.exe
-terraform.tfstate
-terraform.tfstate.backup
-.next/
-node_modules/
-```
-
----
-
-## 📝 Environment Variables Reference
-
-### Backend `.env`
-
-| Variable | Required | Example | Description |
-|----------|----------|---------|-------------|
-| `AWS_ACCESS_KEY_ID` | ✅ | `AKIA...` | IAM user access key |
-| `AWS_SECRET_ACCESS_KEY` | ✅ | `wJal...` | IAM user secret key |
-| `AWS_REGION` | ✅ | `ap-south-1` | AWS region |
-| `S3_BUCKET_NAME` | ✅ | `ai-image-analyzer-bucket-a1b2c3d4` | S3 bucket name |
-| `DYNAMODB_TABLE_NAME` | ✅ | `ImageAnalysis` | DynamoDB table name |
-
----
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
----
-
-## 📄 License
-
-This project is open source and available under the [ISC License](LICENSE).
-
----
-
-## 👤 Author
-
-**Dev Jivani** — [GitHub](https://github.com/Devjivani1606)
