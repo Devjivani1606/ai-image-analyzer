@@ -5,3 +5,9 @@ node_modules/
 dist/
 build/
 .next/
+.terraform/
+*.exe
+terraform.tfstate
+terraform.tfstate.backup
+*.mp3
+uploads/
