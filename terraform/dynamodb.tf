@@ -5,6 +5,7 @@ resource "aws_dynamodb_table" "image_analysis" {
   hash_key     = "pk"
   range_key    = "sk"
 
+
   attribute {
     name = "pk"
     type = "S"
